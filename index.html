@@ -82,7 +82,7 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
 .stage{text-align:center}
 .stage .icon{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;margin:10px auto;background:linear-gradient(145deg,#fff0b5,#f3d36f);font-size:54px}
 .stage h1{font-size:38px}
-.timer{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:72px;font-weight:700;margin:12px 0}
+.timer{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:72px;font-weight:700;margin:8px 0 12px}.date#phaseLabel{color:var(--gold);font-size:12px;letter-spacing:.20em;margin-top:8px}
 .instructions{max-width:620px;margin:0 auto 20px;color:var(--muted);line-height:1.5;font-size:16px}
 .demo-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:0 auto 16px;padding:11px 17px;border-radius:999px;background:#fff7de;border:1.5px solid var(--gold);color:var(--navy);text-decoration:none;font-weight:800;box-shadow:0 6px 14px rgba(178,132,29,.10)}.demo-btn:active{transform:scale(.98)}.controls{display:flex;gap:10px;max-width:620px;margin:auto}.controls button{flex:1}
 .work-primary{border:0;border-radius:999px;background:var(--navy);color:white;padding:14px 18px;font-weight:800}
@@ -166,7 +166,7 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
         <div class="icon" id="exIcon">◌</div>
         <div class="date" id="exNum"></div>
         <h1 id="exName"></h1>
-        <div class="timer" id="timer">1:00</div>
+        <div class="date" id="phaseLabel">GET READY</div><div class="timer" id="timer">0:10</div>
         <div class="instructions" id="instructions"></div>
         <a id="demoLink" class="demo-btn" href="#" target="_blank" rel="noopener">▶ Watch Demo</a>
       </div>
@@ -202,7 +202,7 @@ migraine:[
 ["Gentle Shoulder Stretch","↗","Bring one arm across your chest and hold it gently with the opposite arm, then switch.","Lower the arm and keep the stretch very light.","https://www.hingehealth.com/resources/articles/arm-stretches/"],
 ["Standing Side Leg Lift","↔","Stay upright, hold a sturdy surface, and make a small side leg lift before changing sides.","Shift your weight side to side without lifting the leg.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"]
 ]};
-let mode="regular",idx=0,left=60,tick=null,easy=false;
+let mode="regular",idx=0,left=10,tick=null,easy=false,phase="transition";
 const $=id=>document.getElementById(id);
 function renderMovements(){
   $("movements").innerHTML=plans[mode].map((x,i)=>`<div class="move"><div class="art"><span>${x[1]}</span></div><div class="move-info"><div class="move-name">${i+1}. ${x[0]}</div><div class="move-time">60 seconds · ▶ demo</div></div></div>`).join("");
@@ -219,11 +219,78 @@ function render(){
   $("instructions").textContent=easy?p[3]:p[2];
   $("demoLink").href=p[4];
   $("easier").textContent=easy?"Standard option":"Easier option";
+  $("phaseLabel").textContent=phase==="transition"?"GET READY":"EXERCISE";
   $("timer").textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
+  $("next").textContent=phase==="transition"?"Skip Get Ready →":"Next →";
   $("progress").innerHTML=plans[mode].map((_,i)=>`<div class="dot ${i<idx?"done":""}"></div>`).join("");
 }
-function run(){clearInterval(tick);tick=setInterval(()=>{left--;if(left<=0)next();else render()},1000)}
-function next(){clearInterval(tick);if(idx<4){idx++;left=60;easy=false;render();run()}else finish()}
+
+function playChime(){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.5);
+    osc.onended = () => ctx.close();
+  }catch(e){}
+}
+
+function run(){
+  clearInterval(tick);
+  tick=setInterval(()=>{
+    left--;
+    if(left<=0){
+      if(phase==="transition"){
+        playChime();
+        phase="exercise";
+        left=60;
+        render();
+      }else{
+        advanceExercise();
+      }
+    }else{
+      render();
+    }
+  },1000);
+}
+function advanceExercise(){
+  clearInterval(tick);
+  if(idx<4){
+    playChime();
+    idx++;
+    easy=false;
+    phase="transition";
+    left=10;
+    render();
+    run();
+  }else{
+    finish();
+  }
+}
+function next(){
+  clearInterval(tick);
+  if(phase==="transition"){
+    playChime();
+    phase="exercise";
+    left=60;
+    render();
+    run();
+  }else{
+    advanceExercise();
+  }
+}
 function finish(){
   clearInterval(tick);$("active").style.display="none";$("finished").style.display="block";
   let n=+(localStorage.getItem("fiveCount")||0)+1;localStorage.setItem("fiveCount",n);updateStats();
@@ -237,7 +304,7 @@ function updateStats(){
 $("start").onclick=()=>{
   $("home").classList.add("hide");$("workout").classList.add("show");
   $("modeLabel").textContent=mode==="migraine"?"MIGRAINE DAY":mode==="low"?"LOW ENERGY":"REGULAR";
-  idx=0;left=60;easy=false;$("active").style.display="block";$("finished").style.display="none";render();run();
+  idx=0;left=10;easy=false;phase="transition";$("active").style.display="block";$("finished").style.display="none";render();run();
 };
 $("next").onclick=next;$("easier").onclick=()=>{easy=!easy;render()};
 function home(){clearInterval(tick);$("workout").classList.remove("show");$("home").classList.remove("hide")}
