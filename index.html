@@ -84,7 +84,7 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
 .stage h1{font-size:38px}
 .timer{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:72px;font-weight:700;margin:12px 0}
 .instructions{max-width:620px;margin:0 auto 20px;color:var(--muted);line-height:1.5;font-size:16px}
-.controls{display:flex;gap:10px;max-width:620px;margin:auto}.controls button{flex:1}
+.demo-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin:0 auto 16px;padding:11px 17px;border-radius:999px;background:#fff7de;border:1.5px solid var(--gold);color:var(--navy);text-decoration:none;font-weight:800;box-shadow:0 6px 14px rgba(178,132,29,.10)}.demo-btn:active{transform:scale(.98)}.controls{display:flex;gap:10px;max-width:620px;margin:auto}.controls button{flex:1}
 .work-primary{border:0;border-radius:999px;background:var(--navy);color:white;padding:14px 18px;font-weight:800}
 .finished{text-align:center;padding:30px}
 .bottomnav{display:none}
@@ -168,6 +168,7 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
         <h1 id="exName"></h1>
         <div class="timer" id="timer">1:00</div>
         <div class="instructions" id="instructions"></div>
+        <a id="demoLink" class="demo-btn" href="#" target="_blank" rel="noopener">▶ Watch Demo</a>
       </div>
       <div class="controls"><button id="easier" class="secondary">Easier option</button><button id="next" class="work-primary">Next →</button></div>
     </div>
@@ -181,30 +182,30 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
 <script>
 const plans={
 regular:[
-["Pilates Knee Lift","◌","Stand tall and gently lift one knee while lightly engaging your core. Alternate sides.","Hold a counter or chair and make the lift smaller."],
-["Wall Push-Ups","🏋︎","Place your hands on a wall. Bend your elbows slowly, then press back to standing.","Stand closer to the wall and use a smaller bend."],
-["Pilates Glute Bridge","◡","Lie on your back with knees bent. Lift your hips gently, pause, then lower with control.","Lift only a few inches and move slowly."],
-["Standing Side Leg Lift","↔","Hold a sturdy surface and slowly lift one leg to the side. Alternate sides.","Keep both hands supported and use a smaller range."],
-["Gentle Side Stretch","↗","Reach one arm overhead and lean gently to the side. Alternate slowly.","Keep the arm lower and make the stretch smaller."]
+["Pilates Glute Bridge","◡","Lie on your back with knees bent and feet flat. Lift your hips gently, pause, then lower with control.","Lift only a few inches and move slowly.","https://www.hingehealth.com/resources/articles/bridge-exercise/"],
+["Wall Push-Ups","🏋︎","Place your hands on a wall. Bend your elbows slowly, then press back to standing.","Stand closer to the wall and use a smaller bend.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
+["Standing Side Leg Lift","↔","Hold a sturdy surface and slowly lift one leg to the side. Keep your toes facing forward.","Keep both hands supported and use a smaller range.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"],
+["Seated Leg Raise","🪑","Sit tall near the edge of a sturdy chair. Straighten and lift one leg slowly, then lower and alternate.","Reduce how high you lift the leg or keep the knee slightly bent.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
+["Knee-to-Chest Stretch","↗","Sit upright and gently bring one knee toward your chest using your hands under the thigh. Switch sides.","Bring the knee only partway toward your chest.","https://www.hingehealth.com/resources/articles/knee-to-chest/"]
 ],
 low:[
-["Seated Core Brace","◌","Sit tall and gently tighten your abdominal muscles while breathing normally.","Use a very light brace and relax between breaths."],
-["Wall Push-Ups","🏋︎","Use a wall for a gentle upper-body bodyweight movement.","Stand closer to the wall and bend only a little."],
-["Seated Knee Extension","↔","Sit tall and slowly straighten one leg, lower, then alternate.","Extend the leg only partway."],
-["Supported Heel Raises","↑","Hold a counter or chair and slowly rise onto your toes, then lower.","Lift only slightly or alternate feet."],
-["Gentle Chest Stretch","↔","Gently draw your shoulders back and open through the chest without forcing the stretch.","Keep your arms at your sides and make the movement smaller."]
+["Seated Leg Raise","🪑","Sit tall and slowly lift one leg at a time while keeping your upper body upright.","Lift only slightly or keep the knee bent.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
+["Wall Push-Ups","🏋︎","Use a wall for a gentle upper-body bodyweight exercise. Keep your body long and move slowly.","Stand closer to the wall and bend your elbows only a little.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
+["Knee Extension","↔","Sit tall and slowly straighten one knee, then lower with control before changing sides.","Straighten the knee only partway.","https://www.hingehealth.com/resources/articles/knee-extension/"],
+["Standing Side Leg Lift","↔","Hold a counter or chair and lift one leg gently to the side, then lower.","Use a very small lift and keep both hands supported.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"],
+["Knee-to-Chest Stretch","↗","While seated, gently draw one knee toward your chest, keeping your head and chest upright.","Use a smaller range and avoid pulling firmly.","https://www.hingehealth.com/resources/articles/knee-to-chest/"]
 ],
 migraine:[
-["Quiet Core Breathing","◌","Sit upright with your head neutral and gently engage your core while breathing normally.","Skip the core brace and simply breathe comfortably."],
-["Seated Toe Taps","↔","Sit upright and alternate tapping one foot forward at an easy pace.","Pause between sides or use a smaller movement."],
-["Wall Push","🏋︎","Place your hands on a wall and use a very small push-up motion while keeping your head neutral.","Stand closer to the wall and barely bend the elbows."],
-["Supported Side Step","↔","Hold a sturdy surface and take a small side step, then return. Alternate sides.","Shift your weight side to side without stepping."],
-["Gentle Shoulder Stretch","↗","Bring one arm across your chest and hold gently, then switch sides.","Lower the arm and keep the stretch very light."]
+["Seated Leg Raise","🪑","Sit upright with your head neutral and slowly lift one leg at a time.","Use a smaller lift and pause between sides.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
+["Wall Push-Ups","🏋︎","Keep your head neutral and use a small, slow wall push-up motion.","Stand closer to the wall and barely bend your elbows.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
+["Knee Extension","↔","Remain seated and slowly straighten one leg, then return it to the floor.","Use a smaller range and move at an easy pace.","https://www.hingehealth.com/resources/articles/knee-extension/"],
+["Gentle Shoulder Stretch","↗","Bring one arm across your chest and hold it gently with the opposite arm, then switch.","Lower the arm and keep the stretch very light.","https://www.hingehealth.com/resources/articles/arm-stretches/"],
+["Standing Side Leg Lift","↔","Stay upright, hold a sturdy surface, and make a small side leg lift before changing sides.","Shift your weight side to side without lifting the leg.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"]
 ]};
 let mode="regular",idx=0,left=60,tick=null,easy=false;
 const $=id=>document.getElementById(id);
 function renderMovements(){
-  $("movements").innerHTML=plans[mode].map((x,i)=>`<div class="move"><div class="art"><span>${x[1]}</span></div><div class="move-info"><div class="move-name">${i+1}. ${x[0]}</div><div class="move-time">60 seconds</div></div></div>`).join("");
+  $("movements").innerHTML=plans[mode].map((x,i)=>`<div class="move"><div class="art"><span>${x[1]}</span></div><div class="move-info"><div class="move-name">${i+1}. ${x[0]}</div><div class="move-time">60 seconds · ▶ demo</div></div></div>`).join("");
 }
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
@@ -216,6 +217,7 @@ function render(){
   $("exName").textContent=p[0];
   $("exNum").textContent=`Exercise ${idx+1} of 5`;
   $("instructions").textContent=easy?p[3]:p[2];
+  $("demoLink").href=p[4];
   $("easier").textContent=easy?"Standard option":"Easier option";
   $("timer").textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
   $("progress").innerHTML=plans[mode].map((_,i)=>`<div class="dot ${i<idx?"done":""}"></div>`).join("");
