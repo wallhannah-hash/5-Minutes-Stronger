@@ -97,6 +97,8 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
  .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;justify-content:space-around;background:rgba(255,253,248,.97);backdrop-filter:blur(12px);border-top:1px solid rgba(13,42,74,.08);padding:9px 12px calc(9px + env(safe-area-inset-bottom));z-index:20}
  .bottomnav span{font-size:10px;color:var(--navy);text-align:center}.bottomnav b{font-size:18px;display:block}
 }
+
+.routine-actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}.routine-actions button{flex:1 1 180px;border-radius:999px;padding:12px 16px;font-weight:800}.action-secondary{border:1.5px solid var(--gold);background:#fff9e9;color:var(--navy)}.action-favorite{border:1.5px solid rgba(13,42,74,.15);background:#fff;color:var(--navy)}.swap-btn{width:calc(100% - 18px);margin:0 9px 10px;border:1px solid rgba(13,42,74,.12);background:#fff;border-radius:999px;padding:8px 10px;color:var(--navy);font-size:12px;font-weight:800}.routine-note{margin:8px 2px 0;color:var(--muted);font-size:12px;line-height:1.4}.favorite-note{font-size:12px;color:var(--navy2);font-weight:700;margin-top:8px}
 </style>
 </head>
 <body>
@@ -129,7 +131,7 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
     <button class="mode" data-mode="low"><span class="check">✓</span><span class="mode-icon">🍃</span><h3>Low Energy</h3><p>A gentler version with slower pacing and more supported movement.</p></button>
     <button class="mode" data-mode="migraine"><span class="check">✓</span><span class="mode-icon">☾</span><h3>Migraine Day</h3><p>Slower, more upright movements with fewer position changes.</p></button>
   </div>
-  <button id="start" class="primary">Start Today’s 5-Minute Workout →</button>
+  <button id="start" class="primary">Start Today’s 5-Minute Workout →</button><div class="routine-actions"><button id="newRoutine" class="action-secondary" type="button">↻ New Routine</button><button id="saveFavorite" class="action-favorite" type="button">♡ Save Favorite</button><button id="loadFavorite" class="action-favorite" type="button">★ Load Favorite</button></div><div class="routine-note">Your routine is created inside the app. GitHub and Render are not needed when you generate, swap, or reuse workouts.</div><div id="favoriteNote" class="favorite-note"></div>
 </section>
 
 <section class="section">
@@ -180,49 +182,59 @@ h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:46px;
 <div class="bottomnav"><span><b>⌂</b>Home</span><span><b>🏋︎</b>Workouts</span><span><b>▥</b>Progress</span></div>
 
 <script>
-const plans={
-regular:[
-["Pilates Glute Bridge","◡","Lie on your back with knees bent and feet flat. Lift your hips gently, pause, then lower with control.","Lift only a few inches and move slowly.","https://www.hingehealth.com/resources/articles/bridge-exercise/"],
-["Wall Push-Ups","🏋︎","Place your hands on a wall. Bend your elbows slowly, then press back to standing.","Stand closer to the wall and use a smaller bend.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
-["Standing Side Leg Lift","↔","Hold a sturdy surface and slowly lift one leg to the side. Keep your toes facing forward.","Keep both hands supported and use a smaller range.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"],
-["Seated Leg Raise","🪑","Sit tall near the edge of a sturdy chair. Straighten and lift one leg slowly, then lower and alternate.","Reduce how high you lift the leg or keep the knee slightly bent.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
-["Knee-to-Chest Stretch","↗","Sit upright and gently bring one knee toward your chest using your hands under the thigh. Switch sides.","Bring the knee only partway toward your chest.","https://www.hingehealth.com/resources/articles/knee-to-chest/"]
-],
-low:[
-["Seated Leg Raise","🪑","Sit tall and slowly lift one leg at a time while keeping your upper body upright.","Lift only slightly or keep the knee bent.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
-["Wall Push-Ups","🏋︎","Use a wall for a gentle upper-body bodyweight exercise. Keep your body long and move slowly.","Stand closer to the wall and bend your elbows only a little.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
-["Knee Extension","↔","Sit tall and slowly straighten one knee, then lower with control before changing sides.","Straighten the knee only partway.","https://www.hingehealth.com/resources/articles/knee-extension/"],
-["Standing Side Leg Lift","↔","Hold a counter or chair and lift one leg gently to the side, then lower.","Use a very small lift and keep both hands supported.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"],
-["Knee-to-Chest Stretch","↗","While seated, gently draw one knee toward your chest, keeping your head and chest upright.","Use a smaller range and avoid pulling firmly.","https://www.hingehealth.com/resources/articles/knee-to-chest/"]
-],
-migraine:[
-["Seated Leg Raise","🪑","Sit upright with your head neutral and slowly lift one leg at a time.","Use a smaller lift and pause between sides.","https://www.hingehealth.com/resources/articles/seated-leg-raise/"],
-["Wall Push-Ups","🏋︎","Keep your head neutral and use a small, slow wall push-up motion.","Stand closer to the wall and barely bend your elbows.","https://www.hingehealth.com/resources/articles/wall-push-ups/"],
-["Knee Extension","↔","Remain seated and slowly straighten one leg, then return it to the floor.","Use a smaller range and move at an easy pace.","https://www.hingehealth.com/resources/articles/knee-extension/"],
-["Gentle Shoulder Stretch","↗","Bring one arm across your chest and hold it gently with the opposite arm, then switch.","Lower the arm and keep the stretch very light.","https://www.hingehealth.com/resources/articles/arm-stretches/"],
-["Standing Side Leg Lift","↔","Stay upright, hold a sturdy surface, and make a small side leg lift before changing sides.","Shift your weight side to side without lifting the leg.","https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"]
-]};
-let mode="regular",idx=0,left=10,tick=null,easy=false,phase="transition";
+const exerciseLibrary=[
+{id:"bridge",name:"Pilates Glute Bridge",icon:"◡",category:"pilates",modes:["regular","low"],instructions:"Lie on your back with knees bent and feet flat. Lift your hips gently, pause, then lower with control.",easy:"Lift only a few inches and move slowly.",demo:"https://www.hingehealth.com/resources/articles/bridge-exercise/"},
+{id:"wallpush",name:"Wall Push-Ups",icon:"🏋︎",category:"bodyweight",modes:["regular","low","migraine"],instructions:"Place your hands on a wall. Bend your elbows slowly, then press back to standing.",easy:"Stand closer to the wall and use a smaller bend.",demo:"https://www.hingehealth.com/resources/articles/wall-push-ups/"},
+{id:"sideleg",name:"Standing Side Leg Lift",icon:"↔",category:"pilates",modes:["regular","low","migraine"],instructions:"Hold a sturdy surface and slowly lift one leg to the side. Keep your toes facing forward.",easy:"Keep both hands supported and use a smaller range.",demo:"https://www.hingehealth.com/resources/articles/standing-side-leg-raise/"},
+{id:"seatedleg",name:"Seated Leg Raise",icon:"🪑",category:"bodyweight",modes:["regular","low","migraine"],instructions:"Sit tall near the edge of a sturdy chair. Lift one leg slowly, lower, then alternate.",easy:"Reduce how high you lift the leg or keep the knee slightly bent.",demo:"https://www.hingehealth.com/resources/articles/seated-leg-raise/"},
+{id:"kneechest",name:"Knee-to-Chest Stretch",icon:"↗",category:"stretch",modes:["regular","low"],instructions:"Sit upright and gently bring one knee toward your chest using your hands under the thigh. Switch sides.",easy:"Bring the knee only partway toward your chest.",demo:"https://www.hingehealth.com/resources/articles/knee-to-chest/"},
+{id:"kneeext",name:"Seated Knee Extension",icon:"↔",category:"bodyweight",modes:["regular","low","migraine"],instructions:"Sit tall and slowly straighten one knee, then lower with control before changing sides.",easy:"Straighten the knee only partway.",demo:"https://www.hingehealth.com/resources/articles/knee-extension/"},
+{id:"shoulder",name:"Gentle Shoulder Stretch",icon:"↗",category:"stretch",modes:["regular","low","migraine"],instructions:"Bring one arm across your chest and hold it gently with the opposite arm, then switch.",easy:"Lower the arm and keep the stretch very light.",demo:"https://www.hingehealth.com/resources/articles/arm-stretches/"},
+{id:"heelraise",name:"Supported Heel Raises",icon:"↑",category:"bodyweight",modes:["regular","low","migraine"],instructions:"Hold a counter or chair. Rise slowly onto your toes, pause, then lower with control.",easy:"Lift only slightly or alternate feet.",demo:"https://www.hingehealth.com/resources/articles/calf-raises/"},
+{id:"sitstand",name:"Chair Sit-to-Stand",icon:"🪑",category:"bodyweight",modes:["regular","low"],instructions:"Sit near the front of a sturdy chair. Lean slightly forward, stand, then sit back down slowly.",easy:"Use your hands lightly on the chair or thighs for support.",demo:"https://www.hingehealth.com/resources/articles/sit-to-stand-exercise/"},
+{id:"march",name:"Supported March",icon:"🚶",category:"bodyweight",modes:["regular","low","migraine"],instructions:"Hold a sturdy surface and slowly alternate lifting one knee at a time.",easy:"Lift just the heels instead of the knees.",demo:"https://www.hingehealth.com/resources/articles/marching-in-place/"},
+{id:"hipflex",name:"Standing Hip Flexor Stretch",icon:"↗",category:"stretch",modes:["regular","low"],instructions:"Step one foot back, keep your torso upright, and gently shift forward until you feel a stretch at the front of the hip.",easy:"Shorten the stance and make the shift smaller.",demo:"https://www.hingehealth.com/resources/articles/hip-flexor-stretch/"},
+{id:"hamstretch",name:"Seated Hamstring Stretch",icon:"↔",category:"stretch",modes:["regular","low","migraine"],instructions:"Sit near the edge of a chair, extend one leg with heel down, and hinge forward slightly with a straight back.",easy:"Keep the knee more bent and hinge only a little.",demo:"https://www.hingehealth.com/resources/articles/hamstring-stretch/"},
+{id:"calfstretch",name:"Wall Calf Stretch",icon:"↗",category:"stretch",modes:["regular","low","migraine"],instructions:"Place your hands on a wall, step one foot back, keep that heel down, and gently lean forward.",easy:"Take a shorter step back and reduce the lean.",demo:"https://www.hingehealth.com/resources/articles/calf-stretch/"},
+{id:"minisquat",name:"Supported Mini Squat",icon:"▽",category:"bodyweight",modes:["regular","low"],instructions:"Hold a sturdy surface, bend your knees and hips slightly, then return to standing.",easy:"Use a very small bend and keep more weight through your heels.",demo:"https://www.hingehealth.com/resources/articles/squat-exercise/"},
+{id:"corebrace",name:"Seated Core Brace",icon:"◌",category:"pilates",modes:["regular","low","migraine"],instructions:"Sit tall and gently draw your lower abdomen inward while breathing normally. Relax, then repeat.",easy:"Use a very light brace and relax fully between breaths.",demo:"https://www.hingehealth.com/resources/articles/core-exercises/"},
+{id:"pelvictilt",name:"Pilates Pelvic Tilt",icon:"◡",category:"pilates",modes:["regular","low"],instructions:"Lie on your back with knees bent. Gently flatten your lower back toward the floor, then release.",easy:"Make the movement very small and keep breathing normally.",demo:"https://www.hingehealth.com/resources/articles/pelvic-tilt-exercise/"},
+{id:"standingcore",name:"Standing Core Brace",icon:"◌",category:"pilates",modes:["regular","migraine"],instructions:"Stand tall with knees soft and gently engage your lower abdominal muscles while breathing normally.",easy:"Hold a counter and use a lighter abdominal brace.",demo:"https://www.hingehealth.com/resources/articles/core-exercises/"},
+{id:"cheststretch",name:"Gentle Chest Stretch",icon:"↔",category:"stretch",modes:["regular","low","migraine"],instructions:"Stand or sit tall, gently draw your shoulders back, and open through the chest without forcing the movement.",easy:"Keep your arms at your sides and make the movement smaller.",demo:"https://www.hingehealth.com/resources/articles/chest-stretches/"}
+];
+let mode="regular",idx=0,left=10,tick=null,easy=false,phase="transition",currentRoutine=[];
+function dateKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function getRecentIds(){try{const h=JSON.parse(localStorage.getItem("fiveRecent")||"[]");return Array.isArray(h)?h.slice(-15):[]}catch(e){return[]}}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function poolFor(cat){return exerciseLibrary.filter(e=>e.category===cat&&e.modes.includes(mode))}
+function pickOne(cat,used,recent){let pool=poolFor(cat).filter(e=>!used.has(e.id)&&!recent.includes(e.id));if(!pool.length)pool=poolFor(cat).filter(e=>!used.has(e.id));return pool.length?shuffle(pool)[0]:null}
+function buildRoutine(){const recent=getRecentIds(),used=new Set(),r=[];const pattern=mode==="migraine"?["pilates","bodyweight","stretch","bodyweight","stretch"]:["pilates","bodyweight","bodyweight","stretch","stretch"];for(const cat of pattern){let p=pickOne(cat,used,recent);if(!p){const fb=exerciseLibrary.filter(e=>e.modes.includes(mode)&&!used.has(e.id));p=shuffle(fb)[0]}if(p){r.push(p);used.add(p.id)}}return r.slice(0,5)}
+function saveTodayRoutine(){localStorage.setItem(`fiveRoutine:${dateKey()}:${mode}`,JSON.stringify(currentRoutine.map(e=>e.id)))}
+function restoreTodayRoutine(){try{const raw=JSON.parse(localStorage.getItem(`fiveRoutine:${dateKey()}:${mode}`)||"[]");if(Array.isArray(raw)&&raw.length===5){const list=raw.map(id=>exerciseLibrary.find(e=>e.id===id)).filter(Boolean);if(list.length===5){currentRoutine=list;return true}}}catch(e){}return false}
+function ensureRoutine(force=false){if(force||!restoreTodayRoutine()){currentRoutine=buildRoutine();saveTodayRoutine()}}
+function recordRoutineHistory(){let h=[];try{h=JSON.parse(localStorage.getItem("fiveRecent")||"[]");if(!Array.isArray(h))h=[]}catch(e){}h.push(...currentRoutine.map(e=>e.id));localStorage.setItem("fiveRecent",JSON.stringify(h.slice(-30)))}
+function saveFavorite(){localStorage.setItem("fiveFavorite",JSON.stringify(currentRoutine.map(e=>e.id)));document.getElementById("favoriteNote").textContent="Favorite routine saved."}
+function loadFavorite(){try{const ids=JSON.parse(localStorage.getItem("fiveFavorite")||"[]");const list=ids.map(id=>exerciseLibrary.find(e=>e.id===id)).filter(Boolean);if(list.length===5){currentRoutine=list;saveTodayRoutine();renderMovements();document.getElementById("favoriteNote").textContent="Favorite routine loaded.";return}}catch(e){}document.getElementById("favoriteNote").textContent="No favorite routine saved yet."}
+function swapExercise(index){const cur=currentRoutine[index],used=new Set(currentRoutine.map(e=>e.id));used.delete(cur.id);let choices=exerciseLibrary.filter(e=>e.category===cur.category&&e.modes.includes(mode)&&!used.has(e.id)&&e.id!==cur.id);if(!choices.length)choices=exerciseLibrary.filter(e=>e.modes.includes(mode)&&!used.has(e.id)&&e.id!==cur.id);if(!choices.length)return;currentRoutine[index]=shuffle(choices)[0];saveTodayRoutine();renderMovements()}
+
 const $=id=>document.getElementById(id);
-function renderMovements(){
-  $("movements").innerHTML=plans[mode].map((x,i)=>`<div class="move"><div class="art"><span>${x[1]}</span></div><div class="move-info"><div class="move-name">${i+1}. ${x[0]}</div><div class="move-time">60 seconds · ▶ demo</div></div></div>`).join("");
-}
+function renderMovements(){if(!currentRoutine.length)ensureRoutine();$("movements").innerHTML=currentRoutine.map((x,i)=>`<div class="move"><div class="art"><span>${x.icon}</span></div><div class="move-info"><div class="move-name">${i+1}. ${x.name}</div><div class="move-time">60 seconds · ▶ demo</div></div><button class="swap-btn" type="button" data-swap="${i}">↻ Swap Exercise</button></div>`).join("");document.querySelectorAll("[data-swap]").forEach(btn=>btn.addEventListener("click",()=>swapExercise(Number(btn.dataset.swap))))}
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");mode=b.dataset.mode;renderMovements();
+  b.classList.add("active");mode=b.dataset.mode;currentRoutine=[];ensureRoutine();renderMovements();$("favoriteNote").textContent="";
 });
 function render(){
-  let p=plans[mode][idx];
-  $("exIcon").textContent=p[1];
-  $("exName").textContent=p[0];
+  let p=currentRoutine[idx];
+  $("exIcon").textContent=p.icon;
+  $("exName").textContent=p.name;
   $("exNum").textContent=`Exercise ${idx+1} of 5`;
-  $("instructions").textContent=easy?p[3]:p[2];
-  $("demoLink").href=p[4];
+  $("instructions").textContent=easy?p.easy:p.instructions;
+  $("demoLink").href=p.demo;
   $("easier").textContent=easy?"Standard option":"Easier option";
   $("phaseLabel").textContent=phase==="transition"?"GET READY":"EXERCISE";
   $("timer").textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}`;
   $("next").textContent=phase==="transition"?"Skip Get Ready →":"Next →";
-  $("progress").innerHTML=plans[mode].map((_,i)=>`<div class="dot ${i<idx?"done":""}"></div>`).join("");
+  $("progress").innerHTML=currentRoutine.map((_,i)=>`<div class="dot ${i<idx?"done":""}"></div>`).join("");
 }
 
 function playChime(){
@@ -293,7 +305,7 @@ function next(){
 }
 function finish(){
   clearInterval(tick);$("active").style.display="none";$("finished").style.display="block";
-  let n=+(localStorage.getItem("fiveCount")||0)+1;localStorage.setItem("fiveCount",n);updateStats();
+  let n=+(localStorage.getItem("fiveCount")||0)+1;localStorage.setItem("fiveCount",n);recordRoutineHistory();updateStats();
 }
 function updateStats(){
   let n=+(localStorage.getItem("fiveCount")||0);
@@ -304,13 +316,13 @@ function updateStats(){
 $("start").onclick=()=>{
   $("home").classList.add("hide");$("workout").classList.add("show");
   $("modeLabel").textContent=mode==="migraine"?"MIGRAINE DAY":mode==="low"?"LOW ENERGY":"REGULAR";
-  idx=0;left=10;easy=false;phase="transition";$("active").style.display="block";$("finished").style.display="none";render();run();
+  ensureRoutine();idx=0;left=10;easy=false;phase="transition";$("active").style.display="block";$("finished").style.display="none";render();run();
 };
 $("next").onclick=next;$("easier").onclick=()=>{easy=!easy;render()};
 function home(){clearInterval(tick);$("workout").classList.remove("show");$("home").classList.remove("hide")}
-$("exit").onclick=home;$("done").onclick=home;
+$("exit").onclick=home;$("done").onclick=home;$("newRoutine").onclick=()=>{currentRoutine=buildRoutine();saveTodayRoutine();renderMovements();$("favoriteNote").textContent="A new routine was created."};$("saveFavorite").onclick=saveFavorite;$("loadFavorite").onclick=loadFavorite;
 $("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"}).toUpperCase();
-renderMovements();updateStats();
+ensureRoutine();renderMovements();updateStats();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))}
 </script>
 </body>
